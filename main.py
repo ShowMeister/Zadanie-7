@@ -2,6 +2,7 @@ import numpy as np
 import numpy_financial as npf
 import matplotlib.pyplot as plt
 
+# --- PARAMETRY ZADANIA ---
 PV_M = 120000  # Cena mieszkania obecnie [zł]
 g = 0.05       # Roczny wzrost cen mieszkań [5%]
 T = 5          # Okres [lata]
@@ -18,7 +19,6 @@ print(f"Cena mieszkania (FV_M): {FV_M:.2f} zł")
 print("-" * 50)
 
 # --- 2. Wymagana stała miesięczna wpłata (PMT) ---
-# Usunięto parametr 'type' - domyślnie płatności na końcu okresu
 PMT = npf.pmt(rate=i, nper=N, pv=0, fv=-FV_M)
 
 print("### Wymagana stała miesięczna wpłata ###")
@@ -27,11 +27,9 @@ print("-" * 50)
 
 # --- 3. PRZYGOTOWANIE DANYCH DO WYKRESU ---
 okresy = np.arange(N + 1)
-wartosc_lokaty = np.zeros(N + 1)
 
-# a) Wartość lokaty (kapitalizacja złożona)
-for t in okresy[1:]:
-    wartosc_lokaty[t] = npf.fv(rate=i, nper=t, pmt=-PMT, pv=0)
+# a) Wartość lokaty (kapitalizacja złożona) - WEKTORYZACJA
+wartosc_lokaty = npf.fv(rate=i, nper=okresy, pmt=-PMT, pv=0)
 
 # b) Cena mieszkania (liniowy wzrost)
 przyrost_ceny = FV_M - PV_M
